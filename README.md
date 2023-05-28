@@ -1,28 +1,65 @@
-# Random Graph Generator
-This Python script generates a random graph with nodes and links between them. The graph can be visualized using Tkinter. The script allows users to add nodes, clear the graph, perform a breadth-first search traversal, print the adjacency matrix, and animate the breadth-first search traversal.
+# Random Graph Generator and BFS Traversal
 
-# Installation
-1. Clone the repository to your machine.
-2. Install the required packages:
-`pip install win32api`
-3. Run the script:
-`python src/main.py`
+This program generates a random graph using tkinter in Python and performs a breadth-first search (BFS) traversal on the graph. The graph consists of nodes represented as circles and links represented as lines connecting the nodes.
 
-# How to Use
-1. Add nodes to the graph by specifying the number of nodes to add using the numeric up-down control and clicking the "add" button.
-2. Clear the graph by clicking the "clear" button.
-3. Perform a breadth-first search traversal by clicking the "Breadth-first search" button. The result will be displayed in the label below the button.
-4. Print the adjacency matrix by clicking the "print adjacency matrix" button.
-5. Animate the breadth-first search traversal by clicking the "animate" button.
+## Prerequisites
+- Python 3.x
+- Tkinter library
+- win32api library
+- numericUpDown module (provided)
 
-# Dependencies
-This script requires the following packages:
+## Installation
+1. Clone the repository or download the program files.
+2. Install the required libraries if not already installed:
+   ```
+   pip install tkinter
+   pip install pywin32
+   ```
+   
+## Usage
+To run the program, execute the following command:
+```
+python main.py
+```
 
-* random
-* math
-* time
-* win32api
-* queue
-* tkinter
+The program window will open, and you can interact with the graph using the buttons provided.
 
-This README was writed by [AI](https://poe.com/Sage).
+### Adding Nodes
+- Click the "add" button to add nodes to the graph.
+- Use the numeric up-down control to specify the number of nodes to add.
+- Nodes will be randomly placed within the canvas area and will have unique labels.
+
+### Clearing the Graph
+- Click the "clear" button to remove all nodes and links from the graph.
+- This will reset the graph to its initial state.
+
+### Breadth-First Search Traversal
+- Click the "Breadth-first search" button to perform a BFS traversal on the graph.
+- The traversal will start from the first node (labeled 1).
+- The traversal order will be displayed in the output label.
+
+### Printing the Adjacency Matrix
+- Click the "print adjacency matrix" button to print the adjacency matrix of the graph.
+- The adjacency matrix represents the connections between nodes.
+- 1 indicates a connection, and 0 indicates no connection.
+
+### Animating the BFS Traversal
+- Click the "animate" button to animate the BFS traversal on the graph.
+- The traversal will start from the first node (labeled 1).
+- The nodes visited during the traversal will be highlighted in green, and the links traversed will become thicker and black.
+- The traversal order will be displayed in the output label.
+
+Note: The animation may be blocked if the "add" button is clicked while the animation is in progress.
+
+## Customization
+You can customize the following parameters in the code:
+
+- `TIME_DELAY`: The delay (in seconds) between each step of the animation.
+- `NUMBER_OF_NODES`: The maximum number of nodes that can be added to the graph.
+- `NODE_RADIUS`: The radius of the nodes in pixels.
+- The probability and number of links created between nodes can be adjusted in the `add_node` function.
+
+Feel free to modify these parameters according to your requirements.
+
+## License
+This program is licensed under the [MIT License](LICENSE).
