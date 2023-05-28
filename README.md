@@ -6,7 +6,7 @@ This Python script generates a random graph with nodes and links between them. T
 2. Install the required packages:
 `pip install tkinter`
 3. Run the script:
-`python random_graph_generator.py`
+`python src/main.py`
 
 # How to Use
 1. Add nodes to the graph by specifying the number of nodes to add using the numeric up-down control and clicking the "add" button.
