@@ -4,7 +4,7 @@ This Python script generates a random graph with nodes and links between them. T
 # Installation
 1. Clone the repository to your machine.
 2. Install the required packages:
-`pip install tkinter`
+`pip install win32api`
 3. Run the script:
 `python src/main.py`
 
@@ -24,6 +24,5 @@ This script requires the following packages:
 * win32api
 * queue
 * tkinter
-* numericUpDown
 
 This README was writed by [AI](https://poe.com/Sage).
