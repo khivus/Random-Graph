@@ -12,7 +12,6 @@ NUMBER_OF_NODES = 10
 nodes = []
 NODE_RADIUS = 20
 matrix = [[0 for _ in range(NUMBER_OF_NODES)] for _ in range(NUMBER_OF_NODES)]
-animate_blocked = False
 
 
 def distance(x1, y1, x2, y2):
@@ -64,14 +63,10 @@ def intersect(x1, y1, x2, y2, cx, cy, r):
 
 
 def add_node():
-    global animate_blocked
     button_clear.config(state=NORMAL)
     button_animate.config(state=NORMAL)
     button_find.config(state=NORMAL)
     button_print_matrix.config(state=NORMAL)
-    if animate_blocked:
-        update_nodes()
-        animate_blocked = False
     numeric_up_down.update_value()
     for _ in range(numeric_up_down.get()):
         if len(nodes) < NUMBER_OF_NODES: # For cleaner Canvas
@@ -103,10 +98,11 @@ def add_node():
                             canvas.tag_lower(link)  # place the link behind the nodes
                             matrix[existing_node[2] - 1][len(nodes) - 1] = link
                             matrix[len(nodes) - 1][existing_node[2] - 1] = link
+    update_nodes()
 
 
 def clear_graph():
-    global matrix, animate_blocked
+    global matrix
     numeric_up_down.update_value()
     global nodes
     canvas.delete('all')
@@ -148,10 +144,14 @@ def find_traversal():
 
 
 def find_traversal_animation():
-    global animate_blocked
     update_nodes()
+    numeric_up_down.up_button.config(state=DISABLED)
+    numeric_up_down.down_button.config(state=DISABLED)
+    button_clear.config(state=DISABLED)
+    button_add_node.config(state=DISABLED)
+    button_find.config(state=DISABLED)
+    button_print_matrix.config(state=DISABLED)
     button_animate.config(state=DISABLED)
-    animate_blocked = True
     numeric_up_down.update_value()
     start_node = 0 
     text = '' 
@@ -183,8 +183,13 @@ def find_traversal_animation():
                 
         lable_bfs_out.config(text=text)
     
+    numeric_up_down.up_button.config(state=NORMAL)
+    numeric_up_down.down_button.config(state=NORMAL)
+    button_clear.config(state=NORMAL)
+    button_add_node.config(state=NORMAL)
+    button_find.config(state=NORMAL)
+    button_print_matrix.config(state=NORMAL)
     button_animate.config(state=NORMAL)
-    animate_blocked = False
 
 
 def update_nodes():
@@ -210,7 +215,7 @@ def print_matrix():
 
 
 def create_window():
-    global root, canvas, canvas_width, canvas_height, lable_bfs_out, numeric_up_down, button_animate, button_clear, button_print_matrix, button_find
+    global root, canvas, canvas_width, canvas_height, lable_bfs_out, numeric_up_down, button_animate, button_clear, button_print_matrix, button_find, button_add_node
 
     root=Tk()
 
