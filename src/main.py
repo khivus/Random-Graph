@@ -1,22 +1,23 @@
-# Made by khivus
-
 from random import randint, random
 from math import sqrt
 from time import sleep
 from win32api import GetSystemMetrics
 from queue import Queue
-from tkinter import Button, Canvas, Label, Tk
+from tkinter import DISABLED, NORMAL, Button, Canvas, Label, Tk
 from numericUpDown import NumericUpDown
+
 
 TIME_DELAY = 0.5
 NUMBER_OF_NODES = 10
 nodes = []
 NODE_RADIUS = 20
 matrix = [[0 for _ in range(NUMBER_OF_NODES)] for _ in range(NUMBER_OF_NODES)]
-index_matrix = [[0 for _ in range(NUMBER_OF_NODES)] for _ in range(NUMBER_OF_NODES)]
+animate_blocked = False
+
 
 def distance(x1, y1, x2, y2):
     return sqrt((x1 - x2)**2 + (y1 - y2)**2)
+
 
 def generate_node_coordinates():
     for i in range(100):
@@ -61,7 +62,16 @@ def intersect(x1, y1, x2, y2, cx, cy, r):
                 return True
     return False
 
+
 def add_node():
+    global animate_blocked
+    button_clear.config(state=NORMAL)
+    button_animate.config(state=NORMAL)
+    button_find.config(state=NORMAL)
+    button_print_matrix.config(state=NORMAL)
+    if animate_blocked:
+        update_nodes()
+        animate_blocked = False
     numeric_up_down.update_value()
     for _ in range(numeric_up_down.get()):
         if len(nodes) < NUMBER_OF_NODES: # For cleaner Canvas
@@ -78,8 +88,8 @@ def add_node():
                 for i in range(randint(0, 3)):  # adjust the number of links as desired
                     if random() < 1.2:  # adjust the probability as desired
                         # Create the link
-                        x1, y1 = canvas.coords(node)[0]+10, canvas.coords(node)[1]+10
-                        x2, y2 = canvas.coords(existing_node[0])[0]+10, canvas.coords(existing_node[0])[1]+10
+                        x1, y1 = canvas.coords(node)[0]+NODE_RADIUS, canvas.coords(node)[1]+NODE_RADIUS
+                        x2, y2 = canvas.coords(existing_node[0])[0]+NODE_RADIUS, canvas.coords(existing_node[0])[1]+NODE_RADIUS
                         # Check if the link intersects with any other nodes
                         intersects = False
                         for n1, l1, _ in nodes[:-1]:
@@ -91,22 +101,27 @@ def add_node():
                         if not intersects:
                             link = canvas.create_line(x1, y1, x2, y2, fill='gray', width=2)
                             canvas.tag_lower(link)  # place the link behind the nodes
-                            matrix[existing_node[2] - 1][len(nodes) - 1] = 1
-                            matrix[len(nodes) - 1][existing_node[2] - 1] = 1
-                            index_matrix[existing_node[2] - 1][len(nodes) - 1] = link
-                            index_matrix[len(nodes) - 1][existing_node[2] - 1] = link
+                            matrix[existing_node[2] - 1][len(nodes) - 1] = link
+                            matrix[len(nodes) - 1][existing_node[2] - 1] = link
+
 
 def clear_graph():
-    global matrix, index_matrix
+    global matrix, animate_blocked
     numeric_up_down.update_value()
     global nodes
     canvas.delete('all')
     nodes = []
     matrix = [[0 for _ in range(NUMBER_OF_NODES)] for _ in range(NUMBER_OF_NODES)]
-    index_matrix = [[0 for _ in range(NUMBER_OF_NODES)] for _ in range(NUMBER_OF_NODES)]
+    lable_bfs_out.config(text='')
+    button_clear.config(state=DISABLED)
+    button_animate.config(state=DISABLED)
+    button_find.config(state=DISABLED)
+    button_print_matrix.config(state=DISABLED)
 
-def is_entry_empty(entry):
+
+def is_entry_empty(entry): 
     return entry.get().strip() == ""
+
 
 def find_traversal():
     numeric_up_down.update_value()
@@ -129,12 +144,17 @@ def find_traversal():
                 queue.put(i)
     
     print('Breadth-first search: ' + text)
-    lable_bfs_out.config(text=text)
+    lable_bfs_out.config(text = text)
+
 
 def find_traversal_animation():
+    global animate_blocked
+    update_nodes()
+    button_animate.config(state=DISABLED)
+    animate_blocked = True
     numeric_up_down.update_value()
-    start_node = 0
-    text = ''
+    start_node = 0 
+    text = '' 
     n = len(matrix)
     visited = [False]*n
     queue = Queue()
@@ -152,7 +172,7 @@ def find_traversal_animation():
         
         for i in range(n):
             if matrix[node][i] and not visited[i]:
-                canvas.itemconfig(index_matrix[node][i], width=4, fill='black')
+                canvas.itemconfig(matrix[node][i], width=4, fill='black')
                 root.update()
                 sleep(TIME_DELAY)
                 visited[i] = True
@@ -162,18 +182,35 @@ def find_traversal_animation():
                 sleep(TIME_DELAY)
                 
         lable_bfs_out.config(text=text)
-                 
+    
+    button_animate.config(state=NORMAL)
+    animate_blocked = False
+
+
+def update_nodes():
+    for node in nodes:
+        canvas.itemconfig(node[0], fill='lightblue')        
+    for row in matrix:
+        for element in row:
+            if element:
+                canvas.itemconfig(element, width=2, fill='gray')
+
+
 def print_matrix():
     numeric_up_down.update_value()
     print('Adjacency matrix:')
     for row in matrix:
     # iterate over each column in the row and print the value
         for column in row:
-            print(column, end="\t")  # use a tab character to separate the values
+            if column != 0:
+                print(1, end='\t')
+            else:
+                print(0, end='\t')
         print()  # print a newline after each row
 
+
 def create_window():
-    global root, canvas, canvas_width, canvas_height, lable_bfs_out, numeric_up_down
+    global root, canvas, canvas_width, canvas_height, lable_bfs_out, numeric_up_down, button_animate, button_clear, button_print_matrix, button_find
 
     root=Tk()
 
@@ -205,19 +242,20 @@ def create_window():
     button_add_node=Button(root, text='add', command=add_node)
     button_add_node.place(x=520, y=60)
 
-    button_clear = Button(root, text='clear', command=clear_graph)
+    button_clear = Button(root, text='clear', command=clear_graph, state=DISABLED)
     button_clear.place(x=554, y=60)
 
-    button_find=Button(root, text='Breadth-first search', command=find_traversal)
+    button_find=Button(root, text='Breadth-first search', command=find_traversal, state=DISABLED)
     button_find.place(x=520,y=120)
     
-    button_print_matrix = Button(root, text='print adjacency matrix', command=print_matrix)
+    button_print_matrix = Button(root, text='print adjacency matrix', command=print_matrix, state=DISABLED)
     button_print_matrix.place(x=520, y=150)
     
-    button_animate = Button(root, text='animate', command=find_traversal_animation)
+    button_animate = Button(root, text='animate', command=find_traversal_animation, state=DISABLED)
     button_animate.place(x=520, y=180)
 
     root.mainloop()
+
 
 if __name__ == '__main__':
     create_window()
