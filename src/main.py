@@ -7,10 +7,12 @@ from tkinter import DISABLED, NORMAL, Button, Canvas, Label, Tk
 from numericUpDown import NumericUpDown
 
 
-TIME_DELAY = 0.5
+TIME_DELAY = 0.75
 NUMBER_OF_NODES = 10
-nodes = []
 NODE_RADIUS = 20
+
+
+nodes = []
 matrix = [[0 for _ in range(NUMBER_OF_NODES)] for _ in range(NUMBER_OF_NODES)]
 
 
@@ -75,13 +77,13 @@ def add_node():
                 node_coords = generate_node_coordinates()
             x, y = node_coords
             node = canvas.create_oval(x-NODE_RADIUS, y-NODE_RADIUS, x+NODE_RADIUS, y+NODE_RADIUS, fill='lightblue')
-            label = canvas.create_text(x,y, text=str(len(nodes) + 1))
+            label = canvas.create_text(x,y, text=str(len(nodes) + 1), font=('Arial', NODE_RADIUS))
             nodes.append((node, label, len(nodes) + 1))
             # Add random links between the new node and all existing nodes
             existing_nodes = nodes[:-1]  # all nodes except the new one
             for existing_node in existing_nodes:
                 for i in range(randint(0, 3)):  # adjust the number of links as desired
-                    if random() < 1.2:  # adjust the probability as desired
+                    if random() < 0.6:  # adjust the probability as desired
                         # Create the link
                         x1, y1 = canvas.coords(node)[0]+NODE_RADIUS, canvas.coords(node)[1]+NODE_RADIUS
                         x2, y2 = canvas.coords(existing_node[0])[0]+NODE_RADIUS, canvas.coords(existing_node[0])[1]+NODE_RADIUS
@@ -194,7 +196,7 @@ def find_traversal_animation():
 
 def update_nodes():
     for node in nodes:
-        canvas.itemconfig(node[0], fill='lightblue')        
+        canvas.itemconfig(node[0], fill='lightblue')
     for row in matrix:
         for element in row:
             if element:
@@ -241,7 +243,7 @@ def create_window():
     lable_bfs_out = Label(root, text='', bg='gray80')
     lable_bfs_out.place(x=520, y=90)
 
-    numeric_up_down = NumericUpDown(root, min_value=1, max_value=10, initial_value=1, entry_width=10)
+    numeric_up_down = NumericUpDown(root, min_value=1, max_value=NUMBER_OF_NODES, initial_value=1, entry_width=10)
     numeric_up_down.place(x=520, y=30)
     
     button_add_node=Button(root, text='add', command=add_node)
